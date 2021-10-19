@@ -1,9 +1,9 @@
 //--------------------------------------------------------------
-//-- Oscillator.pde
-//-- Servo neutral and calibration tool for Otto
+//-- Otto-SettingAssist.ino
+//-- Otto robot setup assistnt tool.
 //--------------------------------------------------------------
 //-- Auther: Takuji Kawata (takujikawata_pr), Oct 2021
-//-- GPL license
+//-- MIT License
 //--------------------------------------------------------------
 
 #include <Servo.h>
@@ -26,7 +26,7 @@ enum SERVO_MODE {NEUTRAL_MODE, TRIM_MODE, OSCILLATOR_MODE};
 Servo       servo[4];
 Oscillator  oscillator[4];
 int         trims[4];
-int         command = 'i';
+int         command = 'n';
 int         prevCommand = 0;
 SERVO_MODE  servoMode; 
 
@@ -91,7 +91,7 @@ void loop() {
   if (servoMode == NEUTRAL_MODE) {
     switch (command) {
 
-      case 'i':
+      case 'n':
           doNeutralMode();
           doShowHelp();
           break;
@@ -114,7 +114,7 @@ void loop() {
   } else {
     switch (command) {
 
-      case 'i':
+      case 'n':
           doNeutralMode();
           doShowHelp();
           break;
@@ -129,7 +129,7 @@ void loop() {
           break;
 
       case 'x':
-          // TODO ();
+          doPrintCurrentAdjustment();
           break;
 
       case 'w':
@@ -146,35 +146,35 @@ void loop() {
         }
         break;
 
-      case '1':
+      case '3':
         doAdjust(LEG_LEFT, -1);
         break;
 
-      case 'q':
+      case 'e':
         doAdjust(LEG_LEFT, +1);
         break;
 
-      case 'a':
+      case 'd':
         doAdjust(FOOT_LEFT, -1);
         break;
 
-      case 'z':
+      case 'c':
         doAdjust(FOOT_LEFT, +1);
         break;
 
-      case '3':
+      case '1':
         doAdjust(LEG_RIGHT, -1);
         break;
 
-      case 'e':
+      case 'q':
         doAdjust(LEG_RIGHT, +1);
         break;
 
-      case 'd':
+      case 'a':
         doAdjust(FOOT_RIGHT, -1);
         break;
 
-      case 'c':
+      case 'z':
         doAdjust(FOOT_RIGHT, +1);
         break;
     }
@@ -196,28 +196,34 @@ void doShowHelp() {
   switch(servoMode) {
     case NEUTRAL_MODE:
       Serial.println("Help:");
-      Serial.println("  i key + enter: move all servo (pin 2-5) to neutral (90 degree) position");
+      Serial.println("  n key + enter: move all servo (pin 2-5) to neutral (90 degree) position");
       Serial.println("  t key + enter: go to trim mode");
       Serial.println("  h key + enter or enter: Show this help message");
       break;
     case TRIM_MODE:
     case OSCILLATOR_MODE:
       Serial.println("Help:");
-      Serial.println("  i key + enter: move all servo (pin 2-5) to neutral (90 degree) position");
+      Serial.println("  n key + enter: move all servo (pin 2-5) to neutral (90 degree) position");
       Serial.println("  t key + enter: move all servo (pin 2-5) to the center of the adjusted position");
       Serial.println("  w key + enter: walk");
       Serial.println("  x key + enter: show current adjustment");
-
-      Serial.println("  1 key + enter: Trim left  leg  -");       
-      Serial.println("  q key + enter: Trim left  leg  +");       
-      Serial.println("  a key + enter: Trim left  foot -");       
-      Serial.println("  z key + enter: Trim left  foot +");       
-      Serial.println("  3 key + enter: Trim right leg  -");       
-      Serial.println("  e key + enter: Trim right leg  +");       
-      Serial.println("  d key + enter: Trim right foot -");       
-      Serial.println("  c key + enter: Trim right foot +");
-      Serial.println("  s key + enter: Save current position");
       Serial.println("  h key + enter or enter: Show this help message");
+      Serial.println("");
+      Serial.println("  Trim your Otto!");
+      Serial.println("              +-----------+");
+      Serial.println("              |  O     O  |");
+      Serial.println("              +-----------+");
+      Serial.println("              |           |");
+      Serial.println("              +-----------+");
+      Serial.println("        1/q    +         +   3/e");
+      Serial.println("               |         |");
+      Serial.println("        a/z  __|         |__ d/c");
+      Serial.println("");
+      Serial.println("  1/q key + enter: Trim right leg  -/+");
+      Serial.println("  a/w key + enter: Trim right foot -/+");
+      Serial.println("  3/e key + enter: Trim left  leg  -/+");
+      Serial.println("  d/c key + enter: Trim left  foot -/+");
+      Serial.println("  s key + enter: Save current position");
       break;
   }
 }
@@ -251,14 +257,14 @@ void doNeutralMode() {
   setServoMode(NEUTRAL_MODE);
   
   for (int i = 0; i < 4; i++) {
-    for (int j = 90; j < 120; j += 5) {
+    for (int j = 90; j < 105; j += 3) {
       delay(30);      
     }
-    for (int j = 120; j > 60; j -= 5) {
+    for (int j = 105; j > 75; j -= 3) {
       servo[i].write(j);
       delay(30);      
     }
-    for (int j = 60; j <= 90; j += 5) {
+    for (int j = 75; j <= 90; j += 3) {
       servo[i].write(j);
       delay(30);      
     }
@@ -283,6 +289,36 @@ void doSaveTrims() {
     EEPROM.write(i,v);
   }
   Serial.println("Current position is saved!");
+}
+
+void doPrintCurrentAdjustment() {
+  String left_leg = String(trims[LEG_LEFT]);
+  String right_leg = String(trims[LEG_RIGHT]);
+  String left_foot = String(trims[FOOT_LEFT]);
+  String right_foot = String(trims[FOOT_RIGHT]);
+  
+  Serial.println("----------------------------------------");
+  Serial.println("-- Current Adjustment                 --");
+  Serial.println("----------------------------------------");
+  Serial.println("              +-----------+");
+  Serial.println("              |  O     O  |");
+  Serial.println("              +-----------+");
+  Serial.println("              |           |");
+  Serial.println("              +-----------+");
+  Serial.println("        (RL)   +         +   (LL)");
+  Serial.println("               |         |");
+  Serial.println("        (RF) __|         |__ (LF)");
+  Serial.print("\nRL (RIGHT LEG) :");
+  Serial.print(trims[LEG_RIGHT]);
+  Serial.print("\t");
+  Serial.print("LL (LEFT LEG)  :");
+  Serial.println(trims[LEG_LEFT]);
+  
+  Serial.print("RF (RIGHT FOOT):");
+  Serial.print(trims[FOOT_RIGHT]);  
+  Serial.print("\t");
+  Serial.print("LF (LEFT FOOT) :");
+  Serial.println(trims[FOOT_LEFT]);
 }
 
 void doWalk(float steps, int T, int dir){

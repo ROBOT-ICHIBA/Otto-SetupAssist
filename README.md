@@ -1,11 +1,15 @@
 # Otto-SetupAssist
 Otto-SetupAssist provides an Arduino sketch which assist you to build Otto robots. This sketch provides two features: 
 1. Move servos to neutral  (90 degree) position. 
-2. calibrate servos
+2. Calibrate servos
 
 ## **Installation**
-This is a simple Arduino Sketch, please open it with Arduino IDE and write this program to Otto through USB cable.
-If USB connection doesn't find Otto, you may need to install one of the following USB driver for your computer to recognize it:
+1. Download this repository as a zip file: [Download as a zip file](https://github.com/ROBOT-ICHIBA/Otto-SetupAssist/archive/refs/heads/main.zip)
+2. Extract the zip file in your local machine. (Be sure to extract them in your local machine. The sketch you use requires additional files in the same directory).
+3. Go to Otto-SettingAssist foloder and open Otto-SettingAssist.ino file with Arduino IDE.
+4. Connect your Otto to your PC through USB cable and upload the sketch to Otto.
+
+**Hint:** If the USB connection doesn't find Otto, you may need to install one of the following USB driver for your computer to recognize it:
 
 - [USB serical CH340 driver](https://sparks.gogo.co.nz/ch340.html)
 - [FT232 USB UART driver](https://www.ftdichip.com/Drivers/CDM/CDM%20v2.12.28%20WHQL%20Certified.zip)

@@ -1,5 +1,5 @@
 # Otto-SetupAssist
-Otto-SetupAssist provides an Arduino sketch which assist you to build Otto robots. This sketch provides two features: 
+Otto-SetupAssist provides an Arduino sketch which assist you to build [Otto robots](https://www.ottodiy.com/). This sketch provides two features: 
 1. Move servos to neutral  (90 degree) position. 
 2. Calibrate servos
 
